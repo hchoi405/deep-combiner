@@ -15,18 +15,23 @@ def _bytes_feature(value):
 def parse_single_example(serialized_item):
     feat_description = {
         'x_feat': tf.FixedLenFeature([], tf.string),
-        'x_corr': tf.FixedLenFeature([], tf.string),
-        'x_rand': tf.FixedLenFeature([], tf.string),
+        # 'x_corr': tf.FixedLenFeature([], tf.string),
+        # 'x_rand': tf.FixedLenFeature([], tf.string),
         'y_ref': tf.FixedLenFeature([], tf.string),
+        'shape': tf.FixedLenFeature([], tf.string),
     }
     example = tf.parse_single_example(serialized_item, features=feat_description)
 
-    x_f = tf.reshape(tf.decode_raw(example.get('x_feat'), tf.float32), [conf.FLAGS.image_h, conf.FLAGS.image_w, conf.FLAGS.input_channel])
-    x_c = tf.reshape(tf.decode_raw(example.get('x_corr'), tf.float32), [conf.FLAGS.image_h, conf.FLAGS.image_w, conf.FLAGS.color_channel])
-    x_r = tf.reshape(tf.decode_raw(example.get('x_rand'), tf.float32), [conf.FLAGS.image_h, conf.FLAGS.image_w, conf.FLAGS.color_channel])
-    y_ref = tf.reshape(tf.decode_raw(example.get('y_ref'), tf.float32), [conf.FLAGS.image_h, conf.FLAGS.image_w, conf.FLAGS.color_channel])
+    shape = tf.decode_raw(example.get('shape'), tf.int64)
+    width = tf.cast(shape[1], tf.int64)
+    height = tf.cast(shape[0], tf.int64)
 
-    data_dic = {'x_feat': x_f, 'x_corr': x_c, 'x_rand': x_r, 'y_ref': y_ref}
+    x_f = tf.reshape(tf.decode_raw(example.get('x_feat'), tf.float32), [width, height, conf.FLAGS.input_channel])
+    # x_c = tf.reshape(tf.decode_raw(example.get('x_corr'), tf.float32), [width, height, conf.FLAGS.color_channel])
+    # x_r = tf.reshape(tf.decode_raw(example.get('x_rand'), tf.float32), [width, height, conf.FLAGS.color_channel])
+    y_ref = tf.reshape(tf.decode_raw(example.get('y_ref'), tf.float32), [width, height, conf.FLAGS.color_channel])
+
+    data_dic = {'x_feat': x_f, 'y_ref': y_ref}
 
     return dict(data_dic)
 
@@ -54,9 +59,10 @@ def readTFRecord(fileDir, fileName, batchSize=8, numEpoch=200):
 def writeTFRecord(data, writer):
     features = {
         'x_feat': _bytes_feature((data.get('x_feat')).tobytes()),
-        'x_corr': _bytes_feature((data.get('x_corr')).tobytes()),
-        'x_rand': _bytes_feature((data.get('x_rand')).tobytes()),
+        # 'x_corr': _bytes_feature((data.get('x_corr')).tobytes()),
+        # 'x_rand': _bytes_feature((data.get('x_rand')).tobytes()),
         'y_ref': _bytes_feature((data.get('y_ref')).tobytes()),
+        'shape': _bytes_feature((data.get('shape')).tobytes()),
     }
     ex = tf.train.Example(features=tf.train.Features(feature=features))
     writer.write(ex.SerializeToString())
@@ -69,7 +75,7 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
     x_texture = x_texture[:, :, :, 0:3]
     
     # corrImg
-    x_corr_img = [exr.read(framePath + '_corrImg.exr')]
+    # x_corr_img = [exr.read(framePath + '_corrImg.exr')]
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
         x_corr_img0 = [exr.read(framePath + '_corrImg_0.exr')]
         x_corr_img1 = [exr.read(framePath + '_corrImg_1.exr')]
@@ -87,7 +93,7 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
     x_normal = np.array(x_normal)
     
     # randImg
-    x_rand_img = [exr.read(framePath + '_randImg.exr')]
+    # x_rand_img = [exr.read(framePath + '_randImg.exr')]
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
         x_rand_img0 = [exr.read(framePath + '_randImg_0.exr')]
         x_rand_img1 = [exr.read(framePath + '_randImg_1.exr')]
@@ -100,8 +106,8 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
     y_color = y_color[:, :, :, 0:3]
     y_ref = np.concatenate([y_color], axis=3)
 
-    x_corr_img = np.array(x_corr_img)
-    x_corr_img = x_corr_img[:, :, :, 0:3]
+    # x_corr_img = np.array(x_corr_img)
+    # x_corr_img = x_corr_img[:, :, :, 0:3]
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
         x_corr_img0 = np.array(x_corr_img0)
         x_corr_img0 = x_corr_img0[:, :, :, 0:3]
@@ -112,8 +118,8 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
         x_corr_img3 = np.array(x_corr_img3)
         x_corr_img3 = x_corr_img3[:, :, :, 0:3]
 
-    x_rand_img = np.array(x_rand_img)
-    x_rand_img = x_rand_img[:, :, :, 0:3]
+    # x_rand_img = np.array(x_rand_img)
+    # x_rand_img = x_rand_img[:, :, :, 0:3]
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
         x_rand_img0 = np.array(x_rand_img0)
         x_rand_img0 = x_rand_img0[:, :, :, 0:3]
@@ -129,14 +135,15 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
             x_rand_img0, x_rand_img1, x_rand_img2, x_rand_img3, x_normal, x_texture, x_depth], axis=3)
     elif typeCombiner == conf.TYPE_SINGLE_BUFFER:
         x_feat = np.concatenate([x_corr_img, x_rand_img, x_normal, x_texture, x_depth], axis=3)
-    x_corr = np.concatenate([x_corr_img], axis=3)
-    x_rand = np.concatenate([x_rand_img], axis=3)
+    # x_corr = np.concatenate([x_corr_img], axis=3)
+    # x_rand = np.concatenate([x_rand_img], axis=3)
 
     dataList = {}
     dataList['x_feat'] = x_feat
-    dataList['x_corr'] = x_corr
-    dataList['x_rand'] = x_rand
+    # dataList['x_corr'] = x_corr
+    # dataList['x_rand'] = x_rand
     dataList['y_ref'] = y_ref
+    dataList['shape'] = np.array(x_texture.shape[1:3])
 
     return dataList
 

@@ -60,7 +60,7 @@ def KERNER_PREDICTING_NETWORK(x, _kernel_size, _buffer_size, is_training):
     return net_out
 
 
-def COMBINER_SINGLE_BUFFER(x, _kernel_size, _h, _w, _b, is_training):
+def COMBINER_SINGLE_BUFFER(x, _kernel_size, _b, is_training):
     corr, rand, normal, texture, depth = tf.split(x, [3, 3, 3, 3, 1], axis=-1)
 
     # depth normalization locally
@@ -75,7 +75,7 @@ def COMBINER_SINGLE_BUFFER(x, _kernel_size, _h, _w, _b, is_training):
     return out_img
 
 
-def COMBINER_MULTI_BUFFER(x, _kernel_size, _h, _w, _b, is_training):
+def COMBINER_MULTI_BUFFER(x, _kernel_size, _b, is_training):
     corr0, corr1, corr2, corr3, rand0, rand1, rand2, rand3, normal, texture, depth = tf.split(x, [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1], axis=-1)
 
     # depth normalization locally

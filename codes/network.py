@@ -22,17 +22,17 @@ class Network:
         
         tf.set_random_seed(_flags.train_seed)
         self.is_training = tf.placeholder(tf.bool)
-        self.TENSOR_SHAPE_INPUT_FEAT = [_b, _h, _w, _flags.input_channel]
-        self.TENSOR_SHAPE_OUTPUT = [_b, _h, _w, _flags.color_channel]
+        self.TENSOR_SHAPE_INPUT_FEAT = [_b, None, None, _flags.input_channel]
+        self.TENSOR_SHAPE_OUTPUT = [_b, None, None, _flags.color_channel]
 
         self.loaded_frames = imgIo.readTFRecord(_flags.train_dataset_dir, _flags.tfrecord_filename, _b, _flags.num_epoch)
 
         self.x = tf.placeholder(tf.float32, self.TENSOR_SHAPE_INPUT_FEAT, name='x')
         self.y = tf.placeholder(tf.float32, self.TENSOR_SHAPE_OUTPUT, name='y')
         if _flags.type_combiner == conf.TYPE_MULTI_BUFFER:
-            self._y = model.COMBINER_MULTI_BUFFER(self.x, _flags.kernel_size, _h, _w, _b, self.is_training)
+            self._y = model.COMBINER_MULTI_BUFFER(self.x, _flags.kernel_size, _b, self.is_training)
         elif _flags.type_combiner == conf.TYPE_SINGLE_BUFFER:
-            self._y = model.COMBINER_SINGLE_BUFFER(self.x, _flags.kernel_size, _h, _w, _b, self.is_training)
+            self._y = model.COMBINER_SINGLE_BUFFER(self.x, _flags.kernel_size, _b, self.is_training)
         
         self.loss = loss.RELMSE(self._y, self.y)
         self.loss_op = loss.minimizeAdamOptimizer(_flags.learning_rate, self.loss, name='adam')
