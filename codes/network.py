@@ -152,6 +152,7 @@ class Network:
             logger = Logger(sess, self.FLAGS.log_dir, self.FLAGS.ckpt_dir, reset=False)
             logger.restore_ckpt(sess, self.FLAGS.test_ckpt_filename)
             
+            ITERATIONS = self.FLAGS.test_sppm_iterations
             METHODS = self.FLAGS.test_corr_methods
             TEST_SCENES = self.FLAGS.test_scenes
             TEST_SPPS = self.FLAGS.test_spps
@@ -160,57 +161,58 @@ class Network:
             for spp in TEST_SPPS:
                 for testMethod in METHODS:
                     for testScene in TEST_SCENES:
-                        strInputDir = os.path.join(self.FLAGS.test_input_dir, testScene + '_' + testMethod + '_' + spp)
-                        strTargetDir = os.path.join(self.FLAGS.test_target_dir, testScene)
-                        strOutDir = os.path.join(self.FLAGS.test_output_dir, testScene + '_' + testMethod + '_' + spp)
-                        if not os.path.exists(strOutDir):
-                            os.makedirs(strOutDir)
-                
-                        for testIters in range(TOTAL_FRAMES):
-                            strFrameIdx = '{0:03d}'.format(testIters)
-                            inputFrames = [fn for fn in sorted(glob.glob(os.path.join(strInputDir, strFrameIdx + '*.exr')))]
-                            targetFrame = [fn for fn in sorted(glob.glob(os.path.join(strTargetDir, '000.exr')))]
+                        for iteration in ITERATIONS:
+                            strInputDir = os.path.join(self.FLAGS.test_input_dir, testScene + '_' + testMethod + '_' + spp + '_' + iteration)
+                            strTargetDir = os.path.join(self.FLAGS.test_target_dir, testScene)
+                            strOutDir = os.path.join(self.FLAGS.test_output_dir, testScene + '_' + testMethod + '_' + spp + '_' + iteration)
+                            if not os.path.exists(strOutDir):
+                                os.makedirs(strOutDir)
+                    
+                            for testIters in range(TOTAL_FRAMES):
+                                strFrameIdx = '{0:03d}'.format(testIters)
+                                inputFrames = [fn for fn in sorted(glob.glob(os.path.join(strInputDir, strFrameIdx + '*.exr')))]
+                                targetFrame = [fn for fn in sorted(glob.glob(os.path.join(strTargetDir, '000.exr')))]
 
-                            if len(inputFrames) == 0 or len(targetFrame) == 0:
-                                print("[network.py] Please prepare for test dataset at frame index %d in %s. Skip it" % (testIters, testScene))
-                                continue
+                                if len(inputFrames) == 0 or len(targetFrame) == 0:
+                                    print("[network.py] Please prepare for test dataset at frame index %d in %s. Skip it" % (testIters, testScene))
+                                    continue
 
-                            print("[network.py] %d-th frame from (%s, %sspp)..." % (testIters, testScene, spp))
-                            strCurrInputDir = os.path.join(strInputDir, strFrameIdx)
-                            strCurrTargetDir = os.path.join(strTargetDir, strFrameIdx)
-                            strCurrOutDir = os.path.join(strOutDir, strFrameIdx)
+                                print("[network.py] %d-th frame from (%s, %sspp, %siteration)..." % (testIters, testScene, spp, iteration))
+                                strCurrInputDir = os.path.join(strInputDir, strFrameIdx)
+                                strCurrTargetDir = os.path.join(strTargetDir, strFrameIdx)
+                                strCurrOutDir = os.path.join(strOutDir, strFrameIdx)
 
-                            test_x = imgIo.readOneFrame(strCurrInputDir, strCurrTargetDir, self.FLAGS.type_combiner)
+                                test_x = imgIo.readOneFrame(strCurrInputDir, strCurrTargetDir, self.FLAGS.type_combiner)
 
-                            t_x = test_x['x_feat']
-                            t_x_corrImgs = test_x['x_corr']
-                            t_x_randImgs = test_x['x_rand']
-                            t_y = test_x['y_ref']
+                                t_x = test_x['x_feat']
+                                # t_x_corrImgs = test_x['x_corr']
+                                # t_x_randImgs = test_x['x_rand']
+                                t_y = test_x['y_ref']
 
-                            startTime = time.time()
+                                startTime = time.time()
 
-                            feed = {self.x: t_x, self.y: t_y, self.is_training: False}
-                            out_y = sess.run(self._y, feed_dict=feed)
+                                feed = {self.x: t_x, self.y: t_y, self.is_training: False}
+                                out_y = sess.run(self._y, feed_dict=feed)
 
-                            endTime = time.time() - startTime
-                            print("[network.py] Running time : %f sec" % (endTime))
+                                endTime = time.time() - startTime
+                                print("[network.py] Running time : %f sec" % (endTime))
 
-                            in_cs = np.clip(t_x_corrImgs[0], 0, None)
-                            in_rs = np.clip(t_x_randImgs[0], 0, None)
-                            ref_y = np.array(t_y[0])
-                            out_y = np.clip(out_y[0], 0, None)
+                                # in_cs = np.clip(t_x_corrImgs[0], 0, None)
+                                # in_rs = np.clip(t_x_randImgs[0], 0, None)
+                                ref_y = np.array(t_y[0])
+                                out_y = np.clip(out_y[0], 0, None)
 
-                            relMSE_cs = self.get_relMSE(in_cs, ref_y)
-                            relMSE_rs = self.get_relMSE(in_rs, ref_y)
-                            relMSE_out = self.get_relMSE(out_y, ref_y)
+                                # relMSE_cs = self.get_relMSE(in_cs, ref_y)
+                                # relMSE_rs = self.get_relMSE(in_rs, ref_y)
+                                relMSE_out = self.get_relMSE(out_y, ref_y)
 
-                            print("[network.py] relMSE of corrImg : %f" % relMSE_cs)
-                            print("[network.py] relMSE of randImg : %f" % relMSE_rs)
-                            print("[network.py] relMSE of outImg  : %f" % relMSE_out)
+                                # print("[network.py] relMSE of corrImg : %f" % relMSE_cs)
+                                # print("[network.py] relMSE of randImg : %f" % relMSE_rs)
+                                print("[network.py] relMSE of outImg  : %f" % relMSE_out)
 
-                            exr.write(strCurrOutDir + '_in_corrImg_' + '{:.6f}'.format(relMSE_cs) + '.exr', in_cs)
-                            exr.write(strCurrOutDir + '_in_randImg_' + '{:.6f}'.format(relMSE_rs) + '.exr', in_rs)
-                            exr.write(strCurrOutDir + '_out_' + '{:.6f}'.format(relMSE_out) + '.exr', out_y)
+                                # exr.write(strCurrOutDir + '_in_corrImg_' + '{:.6f}'.format(relMSE_cs) + '.exr', in_cs)
+                                # exr.write(strCurrOutDir + '_in_randImg_' + '{:.6f}'.format(relMSE_rs) + '.exr', in_rs)
+                                exr.write(strCurrOutDir + '_out_' + '{:.6f}'.format(relMSE_out) + '.exr', out_y)
 
 
     def get_index(self, x, stride=50):

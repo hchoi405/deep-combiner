@@ -146,33 +146,34 @@ def generateTrainingData(FLAGS):
         os.makedirs(FLAGS.train_dataset_dir)
 
     fileIdx = 0
-    totalFrame = 20
+    totalFrame = 50
     permIdxSet = np.random.permutation(totalFrame)
 
     for spp in FLAGS.train_spps:
         for corrMethod in FLAGS.train_corr_methods:
             for scene in FLAGS.train_scenes:
-                strPathInput = os.path.join(FLAGS.train_input_dir, scene + '_' + corrMethod + '_' + spp)
-                strPathTarget = os.path.join(FLAGS.train_target_dir, scene)
+                for iteration in FLAGS.train_sppm_iterations:
+                    strPathInput = os.path.join(FLAGS.train_input_dir, scene + '_' + corrMethod + '_' + spp + '_' + iteration)
+                    strPathTarget = os.path.join(FLAGS.train_target_dir, scene)
 
-                for fIdx in range(0, totalFrame):
-                    frameIdx = permIdxSet[fIdx]
-                    strFileIdx = '{0:03d}'.format(fileIdx)
-                    strFrameIdx = '{0:03d}'.format(frameIdx)
-                    setPathInput = [fn for fn in sorted(glob.glob(os.path.join(strPathInput, strFrameIdx + '*.exr')))]
-                    if len(setPathInput) == 0:
-                        print("[image_io.py] Not found dataset at frame index %d from %s scene. Skip it" % (frameIdx, scene))
-                        continue
+                    for fIdx in range(0, totalFrame):
+                        frameIdx = permIdxSet[fIdx]
+                        strFileIdx = '{0:03d}'.format(fileIdx)
+                        strFrameIdx = '{0:03d}'.format(frameIdx)
+                        setPathInput = [fn for fn in sorted(glob.glob(os.path.join(strPathInput, strFrameIdx + '*.exr')))]
+                        if len(setPathInput) == 0:
+                            print("[image_io.py] Not found dataset at frame index %d from %s scene. Skip it" % (frameIdx, scene))
+                            continue
 
-                    print("[image_io.py] %d-th... Working on frame index %d in %s, (%s spp, %s)..." % (fileIdx, frameIdx, scene, spp, corrMethod))
-                    strPathOutput = os.path.join(FLAGS.train_dataset_dir, FLAGS.tfrecord_filename + strFileIdx + '.tfrecord')
-                    writer = tf.python_io.TFRecordWriter(strPathOutput)
-                    currInputFramePath = os.path.join(strPathInput, strFrameIdx)
-                    currTargetFramePath = os.path.join(strPathTarget, strFrameIdx)
-                    data = readOneFrame(currInputFramePath, currTargetFramePath, FLAGS.type_combiner)
-                    writeTFRecord(data, writer)
-                    writer.close()
-                    fileIdx += 1
+                        print("[image_io.py] %d-th... Working on frame index %d in %s, (%s spp, %s, %s iteration)..." % (fileIdx, frameIdx, scene, spp, corrMethod, iteration))
+                        strPathOutput = os.path.join(FLAGS.train_dataset_dir, FLAGS.tfrecord_filename + strFileIdx + '.tfrecord')
+                        writer = tf.python_io.TFRecordWriter(strPathOutput)
+                        currInputFramePath = os.path.join(strPathInput, strFrameIdx)
+                        currTargetFramePath = os.path.join(strPathTarget, strFrameIdx)
+                        data = readOneFrame(currInputFramePath, currTargetFramePath, FLAGS.type_combiner)
+                        writeTFRecord(data, writer)
+                        writer.close()
+                        fileIdx += 1
 
 
     print("[image_io.py] Total %d frames are used in dataset!" % (fileIdx))

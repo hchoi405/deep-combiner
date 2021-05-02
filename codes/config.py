@@ -39,12 +39,14 @@ tf.app.flags.DEFINE_integer ('input_channel', (FLAGS.feature_channel + FLAGS.mul
 
 """ Data-generation config
 """
-tf.app.flags.DEFINE_multi_string ('train_spps', ['064'],
+tf.app.flags.DEFINE_multi_string ('train_spps', ['64', '256'],
                             'The spp to be trained')
-tf.app.flags.DEFINE_multi_string ('train_scenes', ['bathroom'],
+tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "bookshelf", "box", "classroom", "conference", "dining-room", "glass", "living-room", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp", "water", "pool"],
                             'The scenes to be trained')
-tf.app.flags.DEFINE_multi_string ('train_corr_methods', ['nfor'],
+tf.app.flags.DEFINE_multi_string ('train_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be trained')
+tf.app.flags.DEFINE_multi_string ('train_sppm_iterations', ['100', '200', '400'],
+                            '')
 tf.app.flags.DEFINE_string ('tfrecord_filename', 'dataset',
                             'File name of training dataset')
 
@@ -53,7 +55,7 @@ tf.app.flags.DEFINE_string ('tfrecord_filename', 'dataset',
 """
 tf.app.flags.DEFINE_boolean ('retraining_on', False,
                             'Choose retraining using the existing checkpoint')
-tf.app.flags.DEFINE_boolean ('validation_on', True,
+tf.app.flags.DEFINE_boolean ('validation_on', False,
                             'Choose retraining or not')
 tf.app.flags.DEFINE_integer ('patch_size', 128,
                             'Patch size for training')
@@ -81,13 +83,15 @@ tf.app.flags.DEFINE_integer ('image_w', 1280,
                             'The width of testing image')
 tf.app.flags.DEFINE_integer ('test_frame_num', 1,
                             'The number of frames with difference seeds to be tested')
-tf.app.flags.DEFINE_multi_string ('test_spps', ['256'],
+tf.app.flags.DEFINE_multi_string ('test_spps', ['64'],
                             'The spp to be tested')
-tf.app.flags.DEFINE_multi_string ('test_scenes', ['conference'],
+tf.app.flags.DEFINE_multi_string ('test_scenes', ['artware'],
                             'The scenes to be tested')                      
-tf.app.flags.DEFINE_multi_string ('test_corr_methods', ['gpt_L1', 'gpt_L2', 'nfor', 'kpcn'],
+tf.app.flags.DEFINE_multi_string ('test_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be tested')
-tf.app.flags.DEFINE_string ('test_ckpt_filename', 'opt_model_multi.ckpt',
+tf.app.flags.DEFINE_multi_string ('test_sppm_iterations', ['100', '200', '400'],
+                            '')
+tf.app.flags.DEFINE_string ('test_ckpt_filename', 'tr_model_epoch6.ckpt',
                             'File name of checkpoint to be restored for test')
 
 
