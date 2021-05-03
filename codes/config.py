@@ -41,7 +41,7 @@ tf.app.flags.DEFINE_integer ('input_channel', (FLAGS.feature_channel + FLAGS.mul
 """
 tf.app.flags.DEFINE_multi_string ('train_spps', ['64', '256'],
                             'The spp to be trained')
-tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "bookshelf", "box", "classroom", "conference", "dining-room", "glass", "living-room", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp", "water", "pool"],
+tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "box", "classroom", "conference", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp", "water"],
                             'The scenes to be trained')
 tf.app.flags.DEFINE_multi_string ('train_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be trained')
@@ -61,7 +61,7 @@ tf.app.flags.DEFINE_integer ('patch_size', 128,
                             'Patch size for training')
 tf.app.flags.DEFINE_integer ('patch_size_pad', (FLAGS.patch_size + 2 * FLAGS.half_kernel_size),
                             'Padded patch size for training')
-tf.app.flags.DEFINE_integer ('batch_size', 10,
+tf.app.flags.DEFINE_integer ('batch_size', 1,
                             'Batch size for training')
 tf.app.flags.DEFINE_integer ('num_epoch', 50,
                             'Epoch')
@@ -85,7 +85,7 @@ tf.app.flags.DEFINE_integer ('test_frame_num', 1,
                             'The number of frames with difference seeds to be tested')
 tf.app.flags.DEFINE_multi_string ('test_spps', ['64'],
                             'The spp to be tested')
-tf.app.flags.DEFINE_multi_string ('test_scenes', ['artware'],
+tf.app.flags.DEFINE_multi_string ('test_scenes', ["bookshelf", "dining-room", "glass", "living-room", "pool"],
                             'The scenes to be tested')                      
 tf.app.flags.DEFINE_multi_string ('test_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be tested')
