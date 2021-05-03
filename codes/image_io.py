@@ -102,32 +102,32 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
     
     # reference
     y_color = [exr.read(targetFramePath + '.exr')]
-    y_color = np.array(y_color)
+    y_color = np.nan_to_num(np.array(y_color), copy=False)
     y_color = y_color[:, :, :, 0:3]
     y_ref = np.concatenate([y_color], axis=3)
 
-    # x_corr_img = np.array(x_corr_img)
+    # x_corr_img = np.nan_to_num(np.array(x_corr_img), copy=False)
     # x_corr_img = x_corr_img[:, :, :, 0:3]
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
-        x_corr_img0 = np.array(x_corr_img0)
+        x_corr_img0 = np.nan_to_num(np.array(x_corr_img0), copy=False)
         x_corr_img0 = x_corr_img0[:, :, :, 0:3]
-        x_corr_img1 = np.array(x_corr_img1)
+        x_corr_img1 = np.nan_to_num(np.array(x_corr_img1), copy=False)
         x_corr_img1 = x_corr_img1[:, :, :, 0:3]
-        x_corr_img2 = np.array(x_corr_img2)
+        x_corr_img2 = np.nan_to_num(np.array(x_corr_img2), copy=False)
         x_corr_img2 = x_corr_img2[:, :, :, 0:3]
-        x_corr_img3 = np.array(x_corr_img3)
+        x_corr_img3 = np.nan_to_num(np.array(x_corr_img3), copy=False)
         x_corr_img3 = x_corr_img3[:, :, :, 0:3]
 
-    # x_rand_img = np.array(x_rand_img)
+    # x_rand_img = np.nan_to_num(np.array(x_rand_img), copy=False)
     # x_rand_img = x_rand_img[:, :, :, 0:3]
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
-        x_rand_img0 = np.array(x_rand_img0)
+        x_rand_img0 = np.nan_to_num(np.array(x_rand_img0), copy=False)
         x_rand_img0 = x_rand_img0[:, :, :, 0:3]
-        x_rand_img1 = np.array(x_rand_img1)
+        x_rand_img1 = np.nan_to_num(np.array(x_rand_img1), copy=False)
         x_rand_img1 = x_rand_img1[:, :, :, 0:3]
-        x_rand_img2 = np.array(x_rand_img2)
+        x_rand_img2 = np.nan_to_num(np.array(x_rand_img2), copy=False)
         x_rand_img2 = x_rand_img2[:, :, :, 0:3]
-        x_rand_img3 = np.array(x_rand_img3)
+        x_rand_img3 = np.nan_to_num(np.array(x_rand_img3), copy=False)
         x_rand_img3 = x_rand_img3[:, :, :, 0:3]
 
     if typeCombiner == conf.TYPE_MULTI_BUFFER:
