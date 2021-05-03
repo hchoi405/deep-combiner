@@ -43,7 +43,7 @@ class Network:
 
         recordSet = glob.glob(os.path.join(self.FLAGS.train_dataset_dir, \
             self.FLAGS.tfrecord_filename + '*.tfrecord'))
-        itersPerEpoch = int(len(recordSet) / self.FLAGS.batch_size)
+        itersPerEpoch = int(len(recordSet)) # number of images
         if len(recordSet) == 0:
             print("[network.py] There is no tfrecord file. Please check it!")
             return

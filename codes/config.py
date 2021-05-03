@@ -61,7 +61,7 @@ tf.app.flags.DEFINE_integer ('patch_size', 128,
                             'Patch size for training')
 tf.app.flags.DEFINE_integer ('patch_size_pad', (FLAGS.patch_size + 2 * FLAGS.half_kernel_size),
                             'Padded patch size for training')
-tf.app.flags.DEFINE_integer ('batch_size', 1,
+tf.app.flags.DEFINE_integer ('batch_size', 10,
                             'Batch size for training')
 tf.app.flags.DEFINE_integer ('num_epoch', 50,
                             'Epoch')

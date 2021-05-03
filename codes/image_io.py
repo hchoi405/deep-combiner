@@ -49,7 +49,7 @@ def readTFRecord(fileDir, fileName, batchSize=8, numEpoch=200):
     raw_dataset = tf.data.TFRecordDataset(recordSet)
     dataset = raw_dataset.map(lambda x : parse_single_example(x))
     dataset = dataset.shuffle(2 * batchSize)
-    dataset = dataset.batch(batchSize)
+    dataset = dataset.batch(1) # pick only one image (images with different resolution)
     dataset = dataset.repeat(numEpoch)
     iterator = dataset.make_one_shot_iterator()
 
