@@ -41,7 +41,7 @@ tf.app.flags.DEFINE_integer ('input_channel', (FLAGS.feature_channel + FLAGS.mul
 """
 tf.app.flags.DEFINE_multi_string ('train_spps', ['64', '256'],
                             'The spp to be trained')
-tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "box", "classroom", "conference", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp", "water"],
+tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "box", "classroom", "conference", "glass", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp"],
                             'The scenes to be trained')
 tf.app.flags.DEFINE_multi_string ('train_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be trained')
@@ -85,7 +85,7 @@ tf.app.flags.DEFINE_integer ('test_frame_num', 1,
                             'The number of frames with difference seeds to be tested')
 tf.app.flags.DEFINE_multi_string ('test_spps', ['64'],
                             'The spp to be tested')
-tf.app.flags.DEFINE_multi_string ('test_scenes', ["bookshelf", "dining-room", "glass", "living-room", "pool"],
+tf.app.flags.DEFINE_multi_string ('test_scenes', ["bookshelf", "dining-room", "living-room", "pool", "water"],
                             'The scenes to be tested')                      
 tf.app.flags.DEFINE_multi_string ('test_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be tested')
