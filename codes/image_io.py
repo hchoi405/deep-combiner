@@ -154,7 +154,7 @@ def readOneFrame(framePath, targetFramePath, typeCombiner):
 
 
 def generate(train_input_dir, train_target_dir, train_dataset_dir, tfrecord_filename, type_combiner, totalFrame, permIdxSet, item):
-    fileIdx = item[0] * totalFrame
+    fileIdx = 1200 + item[0] * totalFrame
     spp = item[1][0]
     corrMethod = item[1][1]
     scene = item[1][2]
