@@ -107,7 +107,7 @@ class Network:
                         currValIter = 0
                         valRecordSet = glob.glob(os.path.join(self.FLAGS.valid_dataset_dir, \
                             self.FLAGS.tfrecord_filename + '*.tfrecord'))
-                        valItersPerEpoch = int(len(valRecordSet) / self.FLAGS.batch_size)
+                        valItersPerEpoch = int(len(valRecordSet))
                         if len(valRecordSet) == 0:
                             print("[network.py] There is no tfrecord file for validation. skip it!")
                         else:
