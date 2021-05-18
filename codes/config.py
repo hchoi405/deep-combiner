@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_integer ('input_channel', (FLAGS.feature_channel + FLAGS.mul
 """
 tf.app.flags.DEFINE_multi_string ('train_spps', ['64', '256'],
                             'The spp to be trained')
-tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "box", "classroom", "conference", "glass", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp"],
+tf.app.flags.DEFINE_multi_string ('train_scenes', ["artware", "bathroom", "bathroom2", "box", "classroom", "glass", "living-room-2", "spaceship", "sponza", "staircase", "torus", "veach-lamp"],
                             'The scenes to be trained')
 tf.app.flags.DEFINE_multi_string ('train_corr_methods', ['sppm'],
                             'The correlated pixel estimates to be trained')

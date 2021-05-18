@@ -283,7 +283,7 @@ class Logger:
         return tf.summary.merge_all()
 
     def update_loss(self, loss, summary_loss, e, step):
-        if (step % 1 == 0):
+        if (step % 10 == 0):
             print("epoch: %d, step: %2d, loss: %.8f" % (e, (step+1), loss))
         self.train_logger.add_summary(summary_loss, step)
 
