@@ -23,11 +23,17 @@ def parse_single_example(serialized_item):
         # 'x_corr': tf.FixedLenFeature([], tf.string),
         # 'x_rand': tf.FixedLenFeature([], tf.string),
         'y_ref': tf.FixedLenFeature([], tf.string),
-        'shape': tf.FixedLenFeature([], tf.string),
+        'shape': tf.VarLenFeature(tf.string)
     }
     example = tf.parse_single_example(serialized_item, features=feat_description)
 
-    shape = tf.decode_raw(example.get('shape'), tf.int64)
+    a = example.get('shape')
+    b = tf.sparse_tensor_to_dense(a, default_value="merong")
+    c = tf.decode_raw(b, tf.int64)
+
+    # Get shape conditionally (based on default size of shape in tfrecord)
+    shape = tf.cond(tf.equal(tf.shape(c)[0], 0), lambda: tf.convert_to_tensor([conf.FLAGS.image_h, conf.FLAGS.image_w], dtype=tf.int64), lambda: c[0])
+
     width = tf.cast(shape[1], tf.int64)
     height = tf.cast(shape[0], tf.int64)
 
