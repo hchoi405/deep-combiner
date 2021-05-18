@@ -1,6 +1,7 @@
 
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 from weighted_average import weighted_average
 
 def kpn_conv2d(x, filter_size, out_channel, is_training=False, name='conv', relu=True):

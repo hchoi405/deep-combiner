@@ -1,6 +1,7 @@
 
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 from tensorflow.python.framework import ops
 
 # JH: custom_op from weighted_averaged_lib.so file

@@ -1,6 +1,7 @@
 
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def L1(y, _y):
     print('loss : L1')

@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 import exr as exr
 import model as model

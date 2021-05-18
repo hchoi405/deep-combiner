@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore',category=FutureWarning)
 
 import config
 import image_io

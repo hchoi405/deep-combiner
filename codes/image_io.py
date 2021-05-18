@@ -5,6 +5,7 @@ import glob
 
 import exr as exr
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import config as conf
 
 import itertools
