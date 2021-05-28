@@ -37,12 +37,15 @@ def parse_single_example(serialized_item):
     width = tf.cast(shape[1], tf.int64)
     height = tf.cast(shape[0], tf.int64)
 
-    x_f = tf.reshape(tf.decode_raw(example.get('x_feat'), tf.float32), [width, height, conf.FLAGS.input_channel])
+    x_f = tf.reshape(tf.decode_raw(example.get('x_feat'), tf.float32), [width, height, 31])
     x_c = tf.reshape(tf.decode_raw(example.get('x_corr'), tf.float32), [width, height, conf.FLAGS.color_channel])
     x_r = tf.reshape(tf.decode_raw(example.get('x_rand'), tf.float32), [width, height, conf.FLAGS.color_channel])
+    # Change multi to single (feature)
+    if conf.FLAGS.type_combiner == conf.TYPE_SINGLE_BUFFER:
+        *_, normal, texture, depth = tf.split(x_f, [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1], axis=-1)
+        x_f = tf.concat([x_c, x_r, normal, texture, depth], axis=2)
     y_ref = tf.reshape(tf.decode_raw(example.get('y_ref'), tf.float32), [width, height, conf.FLAGS.color_channel])
-
-    data_dic = {'x_feat': x_f, 'y_ref': y_ref}
+    data_dic = {'x_feat': x_f, 'x_corr': x_c, 'x_rand': x_r, 'y_ref': y_ref}
 
     return dict(data_dic)
 
