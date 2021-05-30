@@ -166,8 +166,6 @@ class Network:
                             strInputDir = os.path.join(self.FLAGS.test_input_dir, testScene + '_' + testMethod + '_' + spp + '_' + iteration)
                             strTargetDir = os.path.join(self.FLAGS.test_target_dir, testScene)
                             strOutDir = os.path.join(self.FLAGS.test_output_dir, testScene + '_' + testMethod + '_' + spp + '_' + iteration)
-                            if not os.path.exists(strOutDir):
-                                os.makedirs(strOutDir)
                     
                             for testIters in range(TOTAL_FRAMES):
                                 strFrameIdx = '{0:03d}'.format(testIters)
@@ -175,8 +173,11 @@ class Network:
                                 targetFrame = [fn for fn in sorted(glob.glob(os.path.join(strTargetDir, '000.exr')))]
 
                                 if len(inputFrames) == 0 or len(targetFrame) == 0:
-                                    print("[network.py] Please prepare for test dataset at frame index %d in %s. Skip it" % (testIters, testScene))
+                                    print("[network.py] Please prepare for test dataset at frame index %d in %s. Skip it %s" % (testIters, testScene, strInputDir))
                                     continue
+                                
+                                if not os.path.exists(strOutDir):
+                                    os.makedirs(strOutDir)
 
                                 print("[network.py] %d-th frame from (%s, %sspp, %siteration)..." % (testIters, testScene, spp, iteration))
                                 strCurrInputDir = os.path.join(strInputDir, strFrameIdx)
